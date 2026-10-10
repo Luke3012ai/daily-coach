@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Coach">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Steady Coach</title>
+<style>
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0}
+/* Layout: one calm column, large titles, inset grouped cards, translucent tab bar. System fonts, Apple blue accent. */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#1D1D1F; --muted:#6E6E73; --line:#E5E5EA;
+  --accent:#0071E3; --accent-ink:#FFFFFF; --tint:#EEF4FC;
+  --good:#248A3D; --warn:#B25E09; --bad:#D70015;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 24px rgba(0,0,0,.05);
+  --f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Inter,"Segoe UI",system-ui,sans-serif;
+  --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Inter,"Segoe UI",system-ui,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
+    --accent:#2997FF; --accent-ink:#00111F; --tint:#0E2236;
+    --good:#30D158; --warn:#FF9F0A; --bad:#FF6961; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
+  --accent:#2997FF; --accent-ink:#00111F; --tint:#0E2236;
+  --good:#30D158; --warn:#FF9F0A; --bad:#FF6961; --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.47 var(--f-body);letter-spacing:-.011em;-webkit-font-smoothing:antialiased;padding-inline:18px;padding-block:calc(28px + env(safe-area-inset-top,0px)) 120px}
+.wrap{max-width:700px;margin-inline:auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1;letter-spacing:-.022em}
+h1{font-size:2.6rem;font-weight:700;letter-spacing:-.03em}
+h2{font-size:1.4rem;font-weight:700}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0}
+.eyebrow{font:600 .78rem/1 var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+header{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+header p{font-size:1.05rem}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rule{background:var(--surface);border-radius:18px;padding:14px 14px 16px;font-size:.88rem;line-height:1.35;color:var(--muted);box-shadow:var(--shadow)}
+.rule b{display:block;font:600 1rem/1.2 var(--f-display);margin-bottom:4px;color:var(--ink);letter-spacing:-.015em}
+@media(max-width:520px){.rules{grid-template-columns:1fr}.rule{padding:12px 16px}}
+section[hidden]{display:none}
+.panel{background:var(--surface);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:980px;padding:11px 22px;font-weight:600;font-size:1rem;letter-spacing:-.011em;transition:transform .12s ease,opacity .12s ease}
+a.btn{text-decoration:none;display:inline-block}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+.btn.small{padding:6px 14px;font-size:.88rem}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* Pause */
+.pause{align-items:center;gap:14px;padding:32px 20px 28px;text-align:center;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 9%,var(--surface)),var(--surface) 70%)}
+.orb-box{width:170px;height:170px;display:grid;place-items:center}
+.orb{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--accent) 45%,#fff),var(--accent) 62%);box-shadow:0 18px 50px color-mix(in srgb,var(--accent) 38%,transparent);transform:scale(.58);transition:transform 1s cubic-bezier(.4,0,.2,1)}
+.pause-text{font:700 1.5rem/1.15 var(--f-display);letter-spacing:-.025em;min-height:1.7em}
+.pause .sub{color:var(--muted);font-size:.98rem;min-height:2.8em;max-width:30ch}
+.pause .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+@media(prefers-reduced-motion:reduce){.orb,.btn{transition:none}}
+/* Situations: one grouped list */
+#situations{gap:0!important;background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+details.sit{border-bottom:1px solid var(--line)}
+details.sit:last-child{border-bottom:0}
+details.sit summary{list-style:none;cursor:pointer;padding:16px 20px;font-weight:500;display:flex;justify-content:space-between;gap:12px;align-items:center}
+details.sit summary::-webkit-details-marker{display:none}
+details.sit summary::after{content:"";flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);margin-right:4px;transition:transform .2s ease;opacity:.7}
+details.sit[open] summary::after{transform:rotate(45deg)}
+details.sit[open] summary{font-weight:600}
+details.sit .body{padding:0 20px 20px;display:flex;flex-direction:column;gap:16px}
+.blk h4{margin:0 0 6px;font:600 .74rem/1 var(--f-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.blk ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.say{background:var(--tint);border-radius:14px;padding:12px 14px;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.say span{flex:1;min-width:0}
+.blk.no li::marker{color:var(--bad)}
+.blk.yes li::marker{color:var(--good)}
+.shows{font-size:.92rem;color:var(--muted)}
+/* Inputs */
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:14px;padding:13px 15px;letter-spacing:-.011em}
+textarea:focus,input[type=text]:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+textarea{min-height:130px;resize:vertical}
+select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid transparent;border-radius:14px;padding:12px 14px;-webkit-appearance:none;appearance:none}
+select:focus{outline:0;border-color:var(--accent)}
+label.lbl,span.lbl{font-weight:600;font-size:.95rem}
+.seg{display:inline-flex;background:var(--bg);border-radius:10px;padding:2px}
+.seg button{background:transparent;border:0;padding:6px 14px;font-size:.9rem;border-radius:8px;font-weight:500}
+.seg button[aria-pressed=true]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.14);font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:0;background:var(--bg);border-radius:980px;padding:7px 14px;font-size:.92rem;font-weight:500}
+.chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+/* Verdict */
+.verdict{border-radius:18px;padding:16px 18px;font-weight:600;font-size:1.05rem;letter-spacing:-.015em}
+.verdict.bad{background:color-mix(in srgb,var(--bad) 12%,var(--surface));color:var(--bad)}
+.verdict.warn{background:color-mix(in srgb,var(--warn) 13%,var(--surface));color:var(--warn)}
+.verdict.ok{background:color-mix(in srgb,var(--good) 13%,var(--surface));color:var(--good)}
+.finds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.finds li{display:flex;gap:12px;align-items:flex-start;font-size:1rem}
+.pill{flex:none;font:600 .7rem/1 var(--f-body);letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:980px;margin-top:2px;min-width:54px;text-align:center}
+.pill.bad{background:var(--bad);color:var(--surface)}
+.pill.warn{background:var(--warn);color:var(--surface)}
+.pill.ok{background:var(--good);color:var(--surface)}
+.out{white-space:pre-wrap;background:var(--bg);border-radius:14px;padding:15px;min-height:3em}
+/* Chat */
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{padding:11px 16px;border-radius:20px;white-space:pre-wrap;max-width:92%}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:6px}
+.msg.ai{align-self:flex-start;background:var(--surface);box-shadow:var(--shadow);border-bottom-left-radius:6px}
+/* Today */
+.checks{display:flex;flex-direction:column;gap:0;margin-inline:-22px}
+.check{display:flex;gap:14px;align-items:center;padding:13px 22px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;text-align:left;width:100%;font-size:1rem}
+.check:first-child{border-top:0}
+.check .box{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.8rem;line-height:1;transition:background .15s ease}
+.check[aria-pressed=true] .box{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dots{display:flex;gap:6px;align-items:flex-end;height:60px}
+.dot{flex:1;min-width:6px;border-radius:6px;background:var(--line);min-height:6px}
+.dot.t{outline:2px solid color-mix(in srgb,var(--accent) 50%,transparent);outline-offset:2px}
+.legend{display:flex;justify-content:space-between;font:500 .76rem/1 var(--f-body);color:var(--muted)}
+.focus{border-radius:22px;padding:24px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#5E5CE6));color:#fff;box-shadow:var(--shadow)}
+.focus .eyebrow,.focus .note{color:rgba(255,255,255,.82)}
+.focus h2{font-size:1.9rem;letter-spacing:-.03em}
+/* Qualities */
+.q{background:var(--surface);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.q .top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.scale{display:inline-flex;background:var(--bg);border-radius:980px;padding:3px}
+.scale button{width:36px;height:32px;border-radius:980px;border:0;background:transparent;font:600 .95rem var(--f-body);color:var(--muted)}
+.scale button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.q ul{margin:0;padding-left:20px;font-size:.96rem}
+/* Nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);border-top:.5px solid var(--line);display:flex;justify-content:center;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px))}
+nav .in{display:flex;width:100%;max-width:700px;gap:2px}
+nav button{flex:1;min-width:0;background:transparent;border:0;border-radius:12px;padding:6px 2px 4px;font:500 .68rem/1.1 var(--f-body);color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:0}
+nav button svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current=page]{color:var(--accent)}
+.note{font-size:.92rem;color:var(--muted)}
+details.mt{background:var(--surface);border-radius:22px;box-shadow:var(--shadow)}
+details.mt.sit{border-bottom:0}
+details.mt .checks{margin-inline:-20px}
+details.mt .check{padding-inline:20px}
+details.mt h3{margin-top:4px}
+.sub-title{font:600 .74rem/1 var(--f-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.bar{height:10px;border-radius:980px;background:var(--bg);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:980px}
+.hrow{display:flex;align-items:center;gap:12px;font-size:.92rem}
+.hrow span.n{flex:none;width:2.2em;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.big{font:700 2.4rem/1 var(--f-display);letter-spacing:-.03em}
+.status{font-size:.88rem;font-weight:600}
+.status.good{color:var(--good)}.status.warn{color:var(--warn)}.status.bad{color:var(--bad)}
+.link{background:none;border:0;color:var(--muted);font-size:.85rem;text-decoration:underline;padding:4px 0}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="today-label"></div>
+    <h1>Steady Coach</h1>
+    <p class="muted">Use it in the moment. Slow, calm and humble is the answer to almost everything on this page.</p>
+  </header>
+  <div class="rules" aria-label="Three rules">
+    <div class="rule"><b>1. Question first</b>Ask to understand before you give a view.</div>
+    <div class="rule"><b>2. Words, not face</b>Keep the face still. Say it calmly or not at all.</div>
+    <div class="rule"><b>3. Disagree once</b>Say it once, then support the decision out loud.</div>
+  </div>
+
+  <!-- NOW -->
+  <section id="tab-now">
+    <div class="wrap">
+      <div class="panel pause" id="pause">
+        <div class="eyebrow">Reacting? Start here</div>
+        <div class="orb-box"><div class="orb" id="orb"></div></div>
+        <div class="pause-text" id="pause-text">Pause before you answer</div>
+        <div class="sub" id="pause-sub">One slow breath takes 8 seconds. Do it before you speak or type.</div>
+        <div class="btns">
+          <button class="btn" id="sigh1">One breath (8 s)</button>
+          <button class="btn ghost" id="sigh3">Three breaths (24 s)</button>
+        </div>
+      </div>
+      <h2>What is happening?</h2>
+      <div id="situations" class="wrap" style="gap:8px"></div>
+    </div>
+  </section>
+
+  <!-- CHECK -->
+  <section id="tab-check" hidden>
+    <div class="wrap">
+      <div class="panel">
+        <h2>Check a message before you send it</h2>
+        <p class="note">Paste your draft. The check runs on this device and finds the habits that cost you the most.</p>
+        <div class="row">
+          <span class="note">Going to:</span>
+          <div class="seg" role="group" aria-label="Destination">
+            <button type="button" id="dest-group" aria-pressed="true">Group chat</button>
+            <button type="button" id="dest-private" aria-pressed="false">One person</button>
+          </div>
+        </div>
+        <label class="lbl" for="draft">Your draft</label>
+        <textarea id="draft" placeholder="Type or paste your message here"></textarea>
+        <div class="row">
+          <button class="btn" id="check-btn">Check it</button>
+        </div>
+      </div>
+      <div id="check-out" class="wrap" style="gap:12px"></div>
+    </div>
+  </section>
+
+  <!-- ASK -->
+  <section id="tab-ask" hidden>
+    <div class="wrap">
+      <div class="panel">
+        <h2>Ask any AI</h2>
+        <p class="note">The app writes the full prompt for you, with your three rules and the qualities you are working on. Use it with any AI you have.</p>
+        <div class="chips" id="ask-mode" role="group" aria-label="What do you need">
+          <button class="chip" type="button" aria-pressed="true" data-m="now">Situation now</button>
+          <button class="chip" type="button" aria-pressed="false" data-m="msg">Check a message</button>
+          <button class="chip" type="button" aria-pressed="false" data-m="meet">Prepare a meeting</button>
+          <button class="chip" type="button" aria-pressed="false" data-m="week">Weekly review</button>
+        </div>
+        <div id="ask-where-wrap" style="display:flex;flex-direction:column;gap:8px">
+          <span class="lbl">Where?</span>
+          <div class="chips" id="ask-where" role="group" aria-label="Where">
+            <button class="chip" type="button" aria-pressed="true" data-v="WhatsApp group">WhatsApp group</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="private WhatsApp chat">Private chat</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="a meeting, happening now">In a meeting</button>
+            <button class="chip" type="button" aria-pressed="false" data-v="face to face">Face to face</button>
+          </div>
+        </div>
+        <label class="lbl" for="ask-in" id="ask-lbl">What is happening?</label>
+        <textarea id="ask-in"></textarea>
+        <p class="note" id="ask-hint" hidden></p>
+        <div class="row">
+          <a class="btn" id="ask-open" href="#" target="_blank" rel="noopener">Copy and open</a>
+          <button class="btn ghost" id="ask-copy" type="button">Copy prompt only</button>
+        </div>
+        <p class="note">The prompt is copied first. If the AI opens empty, tap the message box there and paste. Then keep talking with it as long as you need.</p>
+      </div>
+      <div class="panel">
+        <h3>Your AI</h3>
+        <label class="lbl" for="ai-pick">Which AI do you use?</label>
+        <select id="ai-pick"></select>
+        <div id="ai-custom" style="display:flex;flex-direction:column;gap:8px" hidden>
+          <label class="lbl" for="ai-name">Name</label>
+          <input type="text" id="ai-name" placeholder="For example: Kimi" autocomplete="off">
+          <label class="lbl" for="ai-url">Web address</label>
+          <input type="text" id="ai-url" placeholder="https://..." autocomplete="off" inputmode="url">
+        </div>
+      </div>
+      <div class="panel">
+        <h3>About me and the brothers</h3>
+        <p class="note">Optional. Added to every prompt so the AI knows your situation. Stays on this phone.</p>
+        <textarea id="ask-about" style="min-height:110px" placeholder="Your age and background, the brothers, the feedback you received, your goal."></textarea>
+      </div>
+      <details class="mt sit">
+        <summary>See the full prompt</summary>
+        <div class="body"><div class="out" id="ask-preview" style="font-size:.85rem"></div></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- TODAY -->
+  <section id="tab-today" hidden>
+    <div class="wrap">
+      <div class="verdict warn" id="bk-nudge" hidden>You have not backed up your notes in over a week. Open Growth, then More, then Share backup.</div>
+      <div class="verdict warn" id="nudge" hidden>It is evening. Take two minutes for your review below.</div>
+      <div class="focus" id="focus"></div>
+      <div class="panel">
+        <h2>Today's practice</h2>
+        <div class="checks" id="habits"></div>
+      </div>
+      <div class="panel">
+        <h2>Evening review</h2>
+        <label class="lbl" for="rv-good">One moment I handled well</label>
+        <input type="text" id="rv-good" autocomplete="off">
+        <label class="lbl" for="rv-slip">One slip, and what I will do differently</label>
+        <input type="text" id="rv-slip" autocomplete="off">
+        <label class="lbl" for="rv-next">Tomorrow's one action</label>
+        <input type="text" id="rv-next" autocomplete="off">
+        <p class="note">If the slip hurt someone, repair it today: one sentence, no explaining. "I'm sorry for my tone. Thank you for your patience."</p>
+      </div>
+      <div class="panel">
+        <h2>Last 14 days</h2>
+        <div class="dots" id="dots"></div>
+        <div class="legend"><span>14 days ago</span><span id="streak"></span><span>today</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEETING -->
+  <section id="tab-meet" hidden>
+    <div class="wrap">
+      <div class="panel">
+        <h2>Meetings</h2>
+        <p class="note">Two minutes before, three questions after. This is where mistakes get stopped before they happen.</p>
+        <label class="lbl" for="mt-title">Next meeting</label>
+        <input type="text" id="mt-title" placeholder="For example: Elders' meeting, Sunday" autocomplete="off">
+        <div class="row"><button class="btn" id="mt-new" type="button">Start prep</button></div>
+      </div>
+      <div id="mt-list" class="wrap" style="gap:14px"></div>
+    </div>
+  </section>
+
+  <!-- GROWTH -->
+  <section id="tab-grow" hidden>
+    <div class="wrap">
+      <div class="seg" id="grow-seg" role="group" aria-label="Growth sections" style="align-self:stretch">
+        <button type="button" data-p="week" aria-pressed="true" style="flex:1">Week</button>
+        <button type="button" data-p="qual" aria-pressed="false" style="flex:1">Qualities</button>
+        <button type="button" data-p="thanks" aria-pressed="false" style="flex:1">Thanks</button>
+        <button type="button" data-p="more" aria-pressed="false" style="flex:1">More</button>
+      </div>
+
+      <div id="g-week" class="wrap"></div>
+
+      <div id="g-qual" class="wrap" hidden>
+        <div class="panel">
+          <h2>The qualities to excel in</h2>
+          <p class="note">Qualities of a mature, reasonable elder. Rate yourself honestly from 1 to 5, then ask one brother how he sees it. The goal is 5 on every line.</p>
+          <div id="weakest"></div>
+        </div>
+        <div id="quals" class="wrap" style="gap:10px"></div>
+        <div class="panel">
+          <h2>My checklist</h2>
+          <p class="note">Your own list of requirements or goals to tick off. It stays on this phone.</p>
+          <div class="checks" id="cl-list"></div>
+          <input type="text" id="cl-in" placeholder="Add an item" autocomplete="off">
+          <div class="row"><button class="btn" id="cl-add" type="button">Add</button></div>
+        </div>
+      </div>
+
+      <div id="g-thanks" class="wrap" hidden>
+        <div class="panel">
+          <h2>Thank-you tracker</h2>
+          <p class="note">A specific thank-you is one of the strongest signs of love for the brothers. Add each brother, and note what you thanked him for.</p>
+          <label class="lbl" for="pp-name">Add a brother</label>
+          <input type="text" id="pp-name" placeholder="First name" autocomplete="off">
+          <div class="row"><button class="btn" id="pp-add" type="button">Add</button></div>
+        </div>
+        <div id="pp-list" class="wrap" style="gap:14px"></div>
+      </div>
+
+      <div id="g-more" class="wrap" hidden>
+        <div class="panel">
+          <h2>Daily reminder</h2>
+          <p class="note">A web app on an iPhone cannot send reminders by itself, so use the Clock app. It takes 30 seconds.</p>
+          <ol class="note" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px">
+            <li>Open <b>Clock</b>, then <b>Alarm</b>, then the + button.</li>
+            <li>Set <b>8:00 PM</b> and the label <b>Evening review</b>.</li>
+            <li>Repeat <b>Every day</b>, then Save.</li>
+          </ol>
+          <p class="note">After 7 PM this app also shows a reminder on the Today tab when your review is empty.</p>
+        </div>
+        <div class="panel">
+          <h2>Back up your data</h2>
+          <p class="note">Your notes live on this phone only. Back them up once a week: Share backup saves a file to Files, iCloud Drive, Notes or AirDrop.</p>
+          <p class="status" id="bk-status2"></p>
+          <div class="row"><button class="btn" id="bk-share" type="button">Share backup</button><button class="btn ghost" id="bk-copy" type="button">Copy backup</button></div>
+          <div class="row"><button class="btn ghost" id="bk-text" type="button">Copy notes as text</button></div>
+          <p class="note">"Copy notes as text" gives a readable version of your reviews, meetings and thank-yous, for Notes or Notion.</p>
+          <label class="lbl" for="bk-file">Restore from a backup file</label>
+          <input type="file" id="bk-file" accept=".json,.txt,application/json,text/plain">
+          <label class="lbl" for="bk-in">Or paste a backup</label>
+          <textarea id="bk-in" placeholder="Paste a backup here" style="min-height:90px"></textarea>
+          <div class="row"><button class="btn ghost" id="bk-restore" type="button">Restore</button><span class="note" id="bk-status"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav aria-label="Sections"><div class="in" id="nav"></div></nav>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- content ---------- */
+var SITS=[
+ {t:"A message in the group I disagree with",
+  first:["Do not reply. Put the phone down for 30 minutes. If it is about you, wait until tomorrow.","Ask: is this a fact, a preference, or about me? A preference you let go. A fact you check privately."],
+  say:["Thanks for the update. Could I check one thing: [the fact]? I may be missing something."],
+  never:["A question that is really a point (\"Don't you think...?\")","Sarcasm, \"as I said\", \"again\"","Correcting anyone in the group"],
+  shows:"Reasonableness and humility."},
+ {t:"I disagree in a meeting",
+  first:["Breathe out slowly. Soften your eyes and jaw.","Write your point on paper, not on your face."],
+  say:["Can I understand the concern first? What are we trying to solve?","One thing I would like us to consider is [point].","If the majority goes the other way: Understood. I am happy to support it."],
+  never:["Repeat the point a second time","Sigh, shake your head, look at the ceiling","\"The book says...\" to win"],
+  shows:"Accepts counsel. Not rule-oriented. Adjusts his viewpoint."},
+ {t:"Someone criticizes or corrects me",
+  first:["Face still. Do not defend. Do not explain your reasons yet.","Write down what was said, word for word."],
+  say:["Thank you for telling me. Let me think about it.","Could you give me an example, so I get it right?","Tomorrow, privately: Thank you for yesterday. I will change [one thing]."],
+  never:["\"But...\"","Guessing their motive","Bringing it up in the group later"],
+  shows:"Humility. This is the strongest evidence you can give."},
+ {t:"The decision goes against me",
+  first:["Say the sentence out loud while the room is still listening.","Then do the task well, with a good attitude."],
+  say:["Okay, I will support that.","Later, privately: Thanks for the discussion. I will follow through."],
+  never:["\"I told you so\"","Silent withdrawal or half-hearted work","Reopening it in a later meeting"],
+  shows:"Balance. Upholds the decision over his own opinion."},
+ {t:"My heart is racing or I am angry",
+  first:["Use the breath at the top of this page, three times.","Drop your shoulders. Unclench your jaw. Speak 20% slower than you want to.","Decide nothing for 30 minutes. Send nothing."],
+  say:["Let me think about this and come back to you.","Can we continue after the break?"],
+  never:["Answering while the body is still fast","Typing in the group \"just to get it out\" (write it in your notes instead)"],
+  shows:"Self-control. The fruitage of the spirit."},
+ {t:"I need to raise a problem",
+  first:["Ask in private, one person, not in the group.","Bring the facts, not a list of past failures."],
+  say:["Could we put [topic] on the next agenda? I would like to understand how you see it.","Could we check the latest instruction together, so I apply it correctly?"],
+  never:["\"You always postpone...\"","Going to someone above them first","Saying it as a verdict"],
+  shows:"Discernment. Gets to the root of problems peacefully."},
+ {t:"A brother applies an old instruction or makes a mistake",
+  first:["Ask: is anyone harmed today? If no, wait. It can be handled in private later."],
+  say:["I saw the newer wording on [topic]. Could we look at it together when you have time?"],
+  never:["Correcting in front of others or in the group","\"That is not what the book says\""],
+  shows:"Counsels without fear of man, with dignity for the other."},
+ {t:"I slipped: I was sharp or answered too fast",
+  first:["Repair within hours, not days."],
+  say:["I am sorry for my tone earlier. I will slow down. Thank you for your patience."],
+  never:["Explaining why you were right","Waiting for them to raise it"],
+  shows:"Humility. A quick, sincere repair counts as evidence too."},
+ {t:"A new meeting or new message arrives about the congregation",
+  first:["Read it twice. Treat what you do not understand as a reason to wait.","Ask: what do they need from me? Answer only that."],
+  say:["Thanks. Noted.","Thanks. Could I check one detail: [question]?"],
+  never:["Reacting to the tone before the facts","Replying fast to show you are on top of it"],
+  shows:"Balance and good judgment."},
+ {t:"I want to show a good quality today",
+  first:["Pick one. Small and real is enough."],
+  say:["How would you handle this? I would value your view.","Thank you for [specific thing]. It helped me because [reason].","I can cover that. Please send me the details."],
+  never:["Announcing that you are changing","Praise that is vague or too big"],
+  shows:"Humility, love for the brothers, zeal. Evidence builds one small act at a time."}
+];
+
+var QUALS=[
+ {k:"humility",n:"Humility",s:"Humble and mature",m:["Ask one brother: \"How would you handle this?\"","Say \"I did not know that\" once today.","Give another brother credit in front of others."]},
+ {k:"counsel",n:"Accepts counsel",s:"Ability to accept counsel and apply it",m:["Say thank you, then wait a day before you answer.","Write counsel down and apply one thing this week.","Tell the brother what you changed."]},
+ {k:"reason",n:"Reasonableness with fellow elders",s:"Balance, discretion and reasonableness, including with fellow elders",m:["Give way on one matter of preference.","Offer two options, not one.","Ask before you propose."]},
+ {k:"flex",n:"Open, not rule-oriented",s:"Open to suggestions, ready to adjust his viewpoint",m:["Before you cite a rule, ask: \"What are we trying to achieve?\"","Change your view out loud once.","Check the current wording before you quote."]},
+ {k:"love",n:"Love and dignity",s:"Loves his brothers and treats others with dignity",m:["Give one specific thank-you.","Ask about a brother's week and listen.","Speak well of someone who is not there."]},
+ {k:"disc",n:"Discernment",s:"Gets to the root of problems and resolves them peacefully",m:["Ask two questions to learn the facts first.","Separate fact from impression, out loud.","Wait 24 hours on anything big."]},
+ {k:"tact",n:"Counsels with tact and courage",s:"Gives appropriate counsel, not shrinking back from fear of man",m:["In private, once, kindly.","Start with what is good, then the one point.","Ask: \"May I share something?\""]},
+ {k:"along",n:"Gets along with all sorts",s:"Gets along with people of all sorts",m:["Five minutes of non-business time with each brother this week.","Adjust your speed to the person.","No sarcasm, ever."]},
+ {k:"org",n:"Up to date and correct",s:"Up-to-date organizationally, applies guidelines correctly",m:["Read the latest instruction before each decision.","Keep your records exact.","Prepare before every meeting."]},
+ {k:"zeal",n:"Zeal, study and teaching",s:"Zealous evangelizer, diligent student, effective teacher",m:["Go in service with a brother.","Study 20 minutes today.","Prepare one part so well it helps others."]},
+ {k:"content",n:"Content, not seeking prominence",s:"Heartfelt desire to serve, not prominence",m:["Do one hidden task nobody will see.","Do not mention your goals to anyone.","Celebrate another brother's privilege."]}
+];
+
+var HABITS=[
+ "I waited before I replied to something I disagreed with",
+ "I asked a real question before I gave a view",
+ "I disagreed once, then supported the decision out loud",
+ "I kept my face calm when I disagreed",
+ "I corrected nobody in the group",
+ "I gave one specific thank-you",
+ "I did today's quality practice"
+];
+
+
+/* ---------- state ---------- */
+var state={ratings:{},days:{},reqs:{},meetings:[],people:[],about:"",checklist:[],lastBackup:0,savedAt:0,ai:"chatgpt",aiName:"",aiUrl:""};
+var saveTimer=null;
+
+function dkey(d){d=d||new Date();var m=d.getMonth()+1,dd=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd;}
+function today(){var k=dkey();if(!state.days[k])state.days[k]={h:[],good:"",slip:"",next:""};return state.days[k];}
+function lsGet(){try{var s=localStorage.getItem("steady-coach");return s?JSON.parse(s):null;}catch(e){return null;}}
+function lsSet(){try{localStorage.setItem("steady-coach",JSON.stringify(state));}catch(e){}}
+function merge(d){ if(!d)return; if(d.ai)state.ai=d.ai; if(typeof d.aiName==="string")state.aiName=d.aiName; if(typeof d.aiUrl==="string")state.aiUrl=d.aiUrl; if(d.checklist)state.checklist=d.checklist; if(d.lastBackup)state.lastBackup=d.lastBackup; if(d.savedAt)state.savedAt=d.savedAt; if(typeof d.about==="string")state.about=d.about; if(d.meetings)state.meetings=d.meetings; if(d.people)state.people=d.people; if(d.ratings)state.ratings=d.ratings; if(d.days)state.days=d.days; if(d.reqs)Object.keys(d.reqs).forEach(function(k){state.reqs[k]=d.reqs[k];}); }
+function idbOpen(){return new Promise(function(res,rej){try{var r=indexedDB.open("steady-coach",1);r.onupgradeneeded=function(){r.result.createObjectStore("kv");};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej();};}catch(e){rej(e);}});}
+function idbPut(v){idbOpen().then(function(db){db.transaction("kv","readwrite").objectStore("kv").put(v,"state");}).catch(function(){});}
+function idbGet(){return idbOpen().then(function(db){return new Promise(function(res){var q=db.transaction("kv").objectStore("kv").get("state");q.onsuccess=function(){res(q.result||null);};q.onerror=function(){res(null);};});}).catch(function(){return null;});}
+function save(){ state.savedAt=Date.now(); lsSet(); try{idbPut(JSON.parse(JSON.stringify(state)));}catch(e){} }
+
+/* ---------- helpers ---------- */
+function $(id){return document.getElementById(id);}
+function el(tag,attrs){
+  var e=document.createElement(tag);
+  if(attrs)Object.keys(attrs).forEach(function(k){
+    if(k==="class")e.className=attrs[k];
+    else if(k==="text")e.textContent=attrs[k];
+    else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),attrs[k]);
+    else e.setAttribute(k,attrs[k]);
+  });
+  for(var i=2;i<arguments.length;i++){var c=arguments[i];if(c==null)continue;e.appendChild(typeof c==="string"?document.createTextNode(c):c);}
+  return e;
+}
+function copy(text,btn){
+  function done(){var o=btn.textContent;btn.textContent="Copied";setTimeout(function(){btn.textContent=o;},1200);}
+  try{navigator.clipboard.writeText(text).then(done,function(){fallback();});}catch(e){fallback();}
+  function fallback(){var ta=el("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){}ta.remove();}
+}
+function dayOfYear(){var n=new Date(),s=new Date(n.getFullYear(),0,0);return Math.floor((n-s)/864e5);}
+
+/* ---------- nav ---------- */
+var TABS=[["now","Now"],["check","Check"],["ask","Ask"],["meet","Meeting"],["today","Today"],["grow","Growth"]];
+function show(id){
+  TABS.forEach(function(t){
+    var s=$("tab-"+t[0]);s.hidden=t[0]!==id;
+  });
+  Array.prototype.forEach.call($("nav").children,function(b){
+    if(b.dataset.id===id)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
+  });
+  if(id==="grow")renderWeek();
+  if(id==="today")renderToday();
+  window.scrollTo(0,0);
+}
+var ICONS={"now": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M8.3 12.4l2.6 2.6 4.9-5.4\"/>", "ask": "<path d=\"M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16h-.5A1.5 1.5 0 0 1 5 14.5z\"/>", "today": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14\" rx=\"3\"/><path d=\"M4 10h16M8.5 3.5v3M15.5 3.5v3\"/>", "meet": "<rect x=\"5\" y=\"4.5\" width=\"14\" height=\"16\" rx=\"3\"/><path d=\"M9 4.5h6v2.5H9zM9 12h6M9 15.5h4\"/>", "grow": "<path d=\"M5 19v-7M12 19V5M19 19v-9\"/>"};
+TABS.forEach(function(t){
+  var b=el("button",{type:"button","data-id":t[0],onclick:function(){show(t[0]);}});
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICONS[t[0]]+'</svg>';
+  b.appendChild(el("span",{text:t[1]}));
+  $("nav").appendChild(b);
+});
+
+/* ---------- NOW ---------- */
+SITS.forEach(function(s){
+  var body=el("div",{class:"body"});
+  function list(title,items,cls){
+    var ul=el("ul");items.forEach(function(i){ul.appendChild(el("li",{text:i}));});
+    return el("div",{class:"blk "+(cls||"")},el("h4",{text:title}),ul);
+  }
+  body.appendChild(list("Do first",s.first,"yes"));
+  var sayBlk=el("div",{class:"blk"},el("h4",{text:"Say"}));
+  s.say.forEach(function(q){
+    var b=el("button",{type:"button",class:"btn small ghost",text:"Copy"});
+    b.addEventListener("click",function(){copy(q,b);});
+    sayBlk.appendChild(el("div",{class:"say",style:"margin-top:6px"},el("span",{text:q}),b));
+  });
+  body.appendChild(sayBlk);
+  body.appendChild(list("Do not",s.never,"no"));
+  body.appendChild(el("p",{class:"shows",text:"Shows: "+s.shows}));
+  $("situations").appendChild(el("details",{class:"sit"},el("summary",{text:s.t}),body));
+});
+
+var breathing=false,timers=[];
+function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+function breathe(cycles){
+  if(breathing)return;breathing=true;
+  $("sigh1").disabled=true;$("sigh3").disabled=true;
+  var orb=$("orb"),txt=$("pause-text"),sub=$("pause-sub");
+  orb.classList.add("live");
+  var phases=[["Breathe in through the nose",2000,1],["A little more, on top",1000,1.18],["Out slowly through the mouth",5000,.55]];
+  var t=0;
+  for(var c=0;c<cycles;c++){
+    phases.forEach(function(p,i){
+      timers.push(setTimeout(function(){
+        txt.textContent=p[0];
+        sub.textContent=cycles>1?("Breath "+(Math.floor(t/8000)+1)+" of "+cycles):"";
+        orb.style.transitionDuration=p[1]+"ms";
+        orb.style.transform="scale("+p[2]+")";
+      },t));
+      t+=p[1];
+    });
+  }
+  timers.push(setTimeout(function(){
+    breathing=false;orb.classList.remove("live");
+    orb.style.transitionDuration="1000ms";orb.style.transform="scale(.55)";
+    txt.textContent="Now: soft eyes, relaxed jaw";
+    sub.textContent="Ask a question first. Then decide whether to speak at all.";
+    $("sigh1").disabled=false;$("sigh3").disabled=false;
+  },t));
+}
+$("sigh1").addEventListener("click",function(){breathe(1);});
+$("sigh3").addEventListener("click",function(){breathe(3);});
+
+/* ---------- CHECK ---------- */
+var dest="group";
+function setDest(d){dest=d;$("dest-group").setAttribute("aria-pressed",d==="group");$("dest-private").setAttribute("aria-pressed",d==="private");}
+$("dest-group").addEventListener("click",function(){setDest("group");});
+$("dest-private").addEventListener("click",function(){setDest("private");});
+
+function analyze(text,where){
+  var f=[],t=text.trim();
+  if(!t)return null;
+  var words=t.split(/\s+/).length;
+  function add(l,m){f.push({l:l,m:m});}
+  if(where==="group"&&/\b(disagree|not agree|wrong|incorrect|mistake|not correct|not right|that's not|this is not)\b/i.test(t))
+    add("bad","This disagrees with someone in the group. Send it privately to one person instead.");
+  if(/\b(you should|you must|you need to|you have to|we must|we have to|you always|you never|why didn't|you forgot|you failed|your fault)\b/i.test(t))
+    add("bad","Commanding or blaming words. Say what you see, then ask: \"Could we...?\"");
+  if(/\b(don't you think|isn't it|aren't we|shouldn't we|why would|how can|how could|what's the point|so you're saying|do you really)\b/i.test(t))
+    add("bad","This question sounds like a challenge. Ask only a question you truly want answered.");
+  if(/\b(of course|obviously|clearly|as usual|apparently|whatever|interesting\.|great\.|fine\.)\b/i.test(t)||/\bsure[,.]/i.test(t))
+    add("bad","Sarcasm or an ironic tone can show even in text. Remove it.");
+  if(/\b(but|however|actually|in fact|as i said|as i already|i already|i told you|again)\b/i.test(t))
+    add("warn","Defensive words (but, actually, as I said, again). Start with the other person's point instead.");
+  if(/\b(the instruction|the direction|the letter|the book|the guidelines?|according to|it says|as per|S-\d+)\b/i.test(t))
+    add("warn","Quoting a rule can sound like winning. Offer to check it together: \"Could we look at the latest wording together?\"");
+  var caps=(t.match(/\b[A-Z]{4,}\b/g)||[]).filter(function(w){return !/^(WHAT|ZOOM|WHATSAPP|PDF|NOTE|URGENT)$/.test(w)||true;});
+  if(caps.length)add("warn","Capital letters read as shouting.");
+  if((t.match(/!/g)||[]).length>1)add("warn","Several exclamation marks. Use one at most.");
+  if(words>70)add("warn","Long ("+words+" words). Aim for under 60. One message, one point.");
+  if(!/\b(thank|thanks|appreciate|grateful|please|could we|could you|would it be|may i|sorry|if possible)\b/i.test(t))
+    add("warn","No thanks or polite request. Add one.");
+  var nb=f.filter(function(x){return x.l==="bad";}).length,nw=f.filter(function(x){return x.l==="warn";}).length;
+  if(/\?/.test(t)&&/\b(could|would|may i|can we|help me understand|how do you see)\b/i.test(t)&&!f.some(function(x){return /challenge/.test(x.m);}))
+    add("ok","You ask a real question. Good.");
+  if(/\b(thank|thanks|appreciate|grateful)\b/i.test(t))add("ok","There is thanks in it. Good.");
+  if(words<=60&&nb===0)add("ok","Short enough ("+words+" words).");
+  var v;
+  if(nb)v={l:"bad",m:"Do not send yet. Fix the red items, then wait 30 minutes."};
+  else if(nw)v={l:"warn",m:"Close. Fix the amber items, then wait 10 minutes."};
+  else v={l:"ok",m:"This is fine to send. Read it once more as the other person would."};
+  return {f:f,v:v};
+}
+function pillText(l){return l==="bad"?"Fix":l==="warn"?"Soften":"Good";}
+$("check-btn").addEventListener("click",function(){
+  var out=$("check-out");out.textContent="";
+  var r=analyze($("draft").value,dest);
+  if(!r){out.appendChild(el("p",{class:"note",text:"Paste a draft first."}));return;}
+  out.appendChild(el("div",{class:"verdict "+r.v.l,text:r.v.m}));
+  var ul=el("ul",{class:"finds"});
+  r.f.sort(function(a,b){var o={bad:0,warn:1,ok:2};return o[a.l]-o[b.l];}).forEach(function(x){
+    ul.appendChild(el("li",{},el("span",{class:"pill "+x.l,text:pillText(x.l)}),el("span",{text:x.m})));
+  });
+  out.appendChild(el("div",{class:"panel"},ul));
+  var draft=$("draft").value.trim(),dto=dest==="group"?"the whole WhatsApp group of elders":"one person privately";
+  var rp=ctx()+"\n\nTask: check this draft against his three rules and the qualities, then rewrite it so it is humble, brief and calm, and keeps his honest point. It will go to: "+dto+". Reply in this format only:\nPROBLEMS: <up to 3 short points>\nREWRITE: <the message, under 60 words>\nSEND: <now / privately instead / wait until tomorrow, with one short reason>\n\nDraft:\n"+draft;
+  var cb=el("button",{type:"button",class:"btn ghost",text:"Copy prompt only"});
+  cb.addEventListener("click",function(){copy(rp,cb);});
+  var ol=el("a",{class:"btn",href:aiHref(rp)||"#",target:"_blank",rel:"noopener",text:"Copy and open "+curAI().n});
+  wireAiLink(ol,function(){return rp;});
+  out.appendChild(el("div",{class:"panel"},el("h3",{text:"Want a rewrite?"}),el("p",{class:"note",text:"Your AI can check and rewrite this draft. Change which AI in the Ask tab."}),el("div",{class:"row"},ol,cb)));
+});
+
+
+/* ---------- Ask any AI ---------- */
+var BASE="You are a private coach for a Christian elder in an English-speaking congregation. His goal is to be seen as, and truly be, a humble, reasonable, discerning and approachable brother: one who accepts counsel, stays flexible with fellow elders, is not rule-oriented, and gets along with all kinds of people. His three rules: 1) Question first: ask to understand before giving a view, and never use a question to make a point. 2) Words, not face: keep the face calm; say it calmly or not at all. 3) Disagree once, then release out loud: say a disagreement once, then openly support the decision. Keep in mind cultures that value indirect communication, face, seniority and harmony; a polite 'we are settled' can close a topic without meaning agreement.\n\nHow to help him: be direct and concise, with no preamble and no flattery. Use simple English and short sentences. Any words you suggest must be honest, sincere and calm. Never suggest manipulation, flattery or hiding his real view. Do not judge the other brothers' motives; stay with what was said and done. If something should be said in private, or later, say so clearly. If he sounds angry or hurried, tell him to wait first. Be honest with him when he is wrong.";
+var MODES={
+  now:{lbl:"What is happening?",ph:"Example: A brother wrote that the schedule changes again and I think it is wrong. I want to answer now.",where:1,
+    task:function(v){return "Task: coach him in this situation. Answer in under 170 words with: (a) what to do in the next 60 seconds, (b) the exact words to say or send, (c) what NOT to do, (d) which quality this is a chance to show.\n\nSetting: "+where+".\nSituation: "+(v||"(he will describe it)");}},
+  msg:{lbl:"Paste your draft message",ph:"Paste the message you want to send",where:1,
+    task:function(v){return "Task: check this draft against his three rules and the qualities, then rewrite it so it is humble, brief and calm, and keeps his honest point. It will go to: "+where+". Reply in this format only:\nPROBLEMS: <up to 3 short points>\nREWRITE: <the message, under 60 words>\nSEND: <now / privately instead / wait until tomorrow, with one short reason>\n\nDraft:\n"+(v||"(he will paste it)");}},
+  meet:{lbl:"Which meeting, and what is on the agenda?",ph:"Example: Elders' meeting on Sunday. Topics: field service schedule, a pioneer application. I disagree about the schedule.",where:0,
+    task:function(v){return "Task: help him prepare for this meeting in under 220 words: (1) the 2 questions he should ask first to understand, (2) his one point in one calm sentence, (3) what to say if the majority decides against him, (4) the two habits most likely to slip for him in this meeting and how to catch them.\n\nMeeting and agenda:\n"+(v||"(he will describe it)");}},
+  week:{lbl:"Anything to add? (optional)",ph:"Something that happened this week, or a question",where:0,hint:"Your notes from the last 7 days (habits, reviews, meetings, thank-yous, ratings) are added to the prompt automatically.",
+    task:function(v){return "Task: review his week honestly against his three rules and the qualities, in under 260 words: (1) two things he did well, quoting his notes, (2) the pattern behind his slips, (3) one quality to focus on next week with three concrete actions, (4) one sincere sentence of encouragement. Do not flatter him; if the notes show a problem, name it.\n\nHis notes from the last 7 days:\n"+weekNotes()+(v?"\n\nHis comment: "+v:"");}}
+};
+var AIS=[
+  {k:"chatgpt",n:"ChatGPT",base:"https://chatgpt.com/",pre:"https://chatgpt.com/?q="},
+  {k:"gemini",n:"Gemini",base:"https://gemini.google.com/app"},
+  {k:"deepseek",n:"DeepSeek",base:"https://chat.deepseek.com/"},
+  {k:"copilot",n:"Microsoft Copilot",base:"https://copilot.microsoft.com/"},
+  {k:"perplexity",n:"Perplexity",base:"https://www.perplexity.ai/",pre:"https://www.perplexity.ai/search?q="},
+  {k:"claude",n:"Claude",base:"https://claude.ai/new",pre:"https://claude.ai/new?q="},
+  {k:"custom",n:"Another AI (enter its address)"}
+];
+var mode="now",where="WhatsApp group";
+function curAI(){
+  var k=state.ai||"chatgpt",a=AIS.filter(function(x){return x.k===k;})[0]||AIS[0];
+  if(a.k==="custom"){var u=(state.aiUrl||"").trim();if(u&&!/^https?:\/\//i.test(u))u="https://"+u;return {n:(state.aiName||"").trim()||"my AI",base:u};}
+  return a;
+}
+function aiHref(p){var a=curAI();if(!a.base)return "";return (a.pre&&p.length<6000)?a.pre+encodeURIComponent(p):a.base;}
+function criteria(){return QUALS.map(function(q){return "- "+q.n+": "+q.s;}).join("\n");}
+function ctx(){return BASE+"\n\nThe qualities he is working to excel in:\n"+criteria()+(state.about&&state.about.trim()?"\n\nAbout him and the brothers, in his words:\n"+state.about.trim():"");}
+function askPrompt(){return ctx()+"\n\n"+MODES[mode].task($("ask-in").value.trim());}
+function inWeek(k){return daysSince(k)<7;}
+function weekNotes(){
+  var L=[],counts=HABITS.map(function(){return 0;}),act=0;
+  for(var i=6;i>=0;i--){
+    var dt=new Date();dt.setDate(dt.getDate()-i);var k=dkey(dt),d=state.days[k];if(!d)continue;
+    var n=0;(d.h||[]).forEach(function(v,j){if(v){counts[j]++;n++;}});if(n)act++;
+    if(d.good||d.slip||d.next)L.push(niceDate(k)+": "+[d.good?"good: "+d.good:"",d.slip?"slip: "+d.slip:"",d.next?"next: "+d.next:""].filter(Boolean).join("; "));
+  }
+  var out=["Days with practice: "+act+" of 7","Habits (days out of 7):"];
+  HABITS.forEach(function(h,j){out.push("- "+h+": "+counts[j]);});
+  if(L.length){out.push("Daily reviews:");out=out.concat(L);}
+  var ms=state.meetings.filter(function(m){return inWeek(m.d);});
+  if(ms.length){out.push("Meetings:");ms.forEach(function(m){out.push("- "+niceDate(m.d)+", "+m.title+(m.good?". Went well: "+m.good:"")+(m.slip?". Slip: "+m.slip:"")+(m.thank?". Will thank: "+m.thank:""));});}
+  var th=[];state.people.forEach(function(p){(p.log||[]).forEach(function(l){if(inWeek(l.d))th.push("- "+p.name+": "+l.t);});});
+  if(th.length){out.push("Thank-yous given:");out=out.concat(th);}
+  var r=QUALS.filter(function(q){return state.ratings[q.k];});
+  if(r.length){out.push("His self-ratings (1-5):");r.forEach(function(q){out.push("- "+q.n+": "+state.ratings[q.k]);});}
+  return out.join("\n");
+}
+function wireAiLink(a,getPrompt){
+  a.addEventListener("click",function(e){
+    var p=getPrompt(),h=aiHref(p);
+    copy(p,a);
+    if(!h){e.preventDefault();$("ask-hint").hidden=false;$("ask-hint").textContent="Prompt copied. Add your AI's web address under Your AI to open it from here.";return;}
+    a.href=h;
+  });
+}
+function refreshAsk(){
+  var M=MODES[mode];
+  $("ask-lbl").textContent=M.lbl;$("ask-in").placeholder=M.ph;
+  $("ask-where-wrap").hidden=!M.where;
+  $("ask-hint").hidden=!M.hint;$("ask-hint").textContent=M.hint||"";
+  var p=askPrompt(),a=curAI();
+  $("ask-open").textContent="Copy and open "+a.n;
+  $("ask-open").href=aiHref(p)||"#";
+  $("ask-preview").textContent=p;
+  $("ai-custom").hidden=(state.ai||"chatgpt")!=="custom";
+}
+AIS.forEach(function(a){var o=el("option",{value:a.k,text:a.n});$("ai-pick").appendChild(o);});
+$("ai-pick").addEventListener("change",function(e){state.ai=e.target.value;save();refreshAsk();});
+$("ai-name").addEventListener("input",function(e){state.aiName=e.target.value;save();refreshAsk();});
+$("ai-url").addEventListener("input",function(e){state.aiUrl=e.target.value;save();refreshAsk();});
+function chipGroup(id,attr,fn){
+  $(id).addEventListener("click",function(ev){
+    var b=ev.target.closest("button");if(!b)return;
+    Array.prototype.forEach.call($(id).children,function(c){c.setAttribute("aria-pressed",c===b);});
+    fn(b.dataset[attr]);refreshAsk();
+  });
+}
+chipGroup("ask-mode","m",function(v){mode=v;});
+chipGroup("ask-where","v",function(v){where=v;});
+$("ask-in").addEventListener("input",refreshAsk);
+$("ask-about").addEventListener("input",function(e){state.about=e.target.value;save();refreshAsk();});
+$("ask-copy").addEventListener("click",function(){copy(askPrompt(),$("ask-copy"));});
+wireAiLink($("ask-open"),askPrompt);
+function loadAskSettings(){$("ask-about").value=state.about||"";$("ai-pick").value=state.ai||"chatgpt";$("ai-name").value=state.aiName||"";$("ai-url").value=state.aiUrl||"";refreshAsk();}
+
+/* ---------- TODAY ---------- */
+function pickFocus(){
+  var rated=QUALS.filter(function(q){return state.ratings[q.k];});
+  if(rated.length>=3){
+    var sorted=QUALS.slice().sort(function(a,b){return (state.ratings[a.k]||3)-(state.ratings[b.k]||3);});
+    var low=sorted.filter(function(q){return (state.ratings[q.k]||3)===(state.ratings[sorted[0].k]||3);});
+    return low[dayOfYear()%low.length];
+  }
+  return QUALS[dayOfYear()%QUALS.length];
+}
+function renderToday(){
+  var q=pickFocus(),act=q.m[dayOfYear()%q.m.length];
+  var f=$("focus");f.textContent="";
+  f.appendChild(el("div",{class:"eyebrow",text:"Today's quality"}));
+  f.appendChild(el("h2",{text:q.n,style:"margin:6px 0"}));
+  f.appendChild(el("p",{text:q.s,class:"note"}));
+  f.appendChild(el("p",{style:"margin-top:8px;font-weight:600",text:"Practice: "+act}));
+  var day=today(),h=$("habits");h.textContent="";
+  HABITS.forEach(function(t,i){
+    var on=!!day.h[i];
+    var b=el("button",{type:"button",class:"check","aria-pressed":on},el("span",{class:"box",text:on?"✓":""}),el("span",{text:t}));
+    b.addEventListener("click",function(){var d=today();d.h[i]=!d.h[i];save();renderToday();});
+    h.appendChild(b);
+  });
+  ["good","slip","next"].forEach(function(k){var i=$("rv-"+k);if(document.activeElement!==i)i.value=day[k]||"";});
+  $("bk-nudge").hidden=!(Object.keys(state.days).length>=3&&(Date.now()-(state.lastBackup||0))>7*864e5);
+  var hr=new Date().getHours();$("nudge").hidden=!(hr>=19&&!(day.good||day.slip||day.next));
+  var dots=$("dots");dots.textContent="";
+  var streak=0,counting=true;
+  for(var i=13;i>=0;i--){
+    var dt=new Date();dt.setDate(dt.getDate()-i);
+    var d=state.days[dkey(dt)];
+    var n=d?d.h.filter(Boolean).length:0;
+    var dot=el("div",{class:"dot"+(i===0?" t":""),title:dkey(dt)+": "+n+" of 7"});
+    dot.style.height=Math.max(6,Math.round(n/7*44))+"px";
+    if(n>0)dot.style.background="var(--accent)";
+    dots.appendChild(dot);
+  }
+  for(var j=0;j<60;j++){
+    var dd=new Date();dd.setDate(dd.getDate()-j);
+    var x=state.days[dkey(dd)];var c=x?x.h.filter(Boolean).length:0;
+    if(c>=5)streak++;else if(j>0)break;
+  }
+  $("streak").textContent=streak?streak+"-day run (5+ checks)":"";
+}
+["good","slip","next"].forEach(function(k){
+  $("rv-"+k).addEventListener("input",function(e){today()[k]=e.target.value;save();});
+});
+
+/* ---------- QUALITIES ---------- */
+function renderQuals(){
+  var box=$("quals");box.textContent="";
+  QUALS.forEach(function(q){
+    var sc=el("div",{class:"scale",role:"group","aria-label":q.n+" rating"});
+    for(var i=1;i<=5;i++){(function(n){
+      var b=el("button",{type:"button",text:String(n),"aria-pressed":state.ratings[q.k]===n});
+      b.addEventListener("click",function(){state.ratings[q.k]=(state.ratings[q.k]===n?0:n);save();renderQuals();renderToday();});
+      sc.appendChild(b);
+    })(i);}
+    var ul=el("ul");q.m.forEach(function(m){ul.appendChild(el("li",{text:m}));});
+    box.appendChild(el("div",{class:"q"},
+      el("div",{class:"top"},el("h3",{text:q.n}),sc),
+      el("p",{class:"note",text:q.s}),
+      el("div",{class:"eyebrow",text:"Practice this week"}),ul));
+  });
+  var rated=QUALS.filter(function(q){return state.ratings[q.k];}).sort(function(a,b){return state.ratings[a.k]-state.ratings[b.k];});
+  var w=$("weakest");w.textContent="";
+  if(rated.length<3){w.appendChild(el("p",{class:"note",text:"Rate at least three to see where to focus first."}));}
+  else{
+    w.appendChild(el("div",{class:"eyebrow",text:"Focus first"}));
+    w.appendChild(el("p",{style:"font-weight:600",text:rated.slice(0,2).map(function(q){return q.n+" ("+state.ratings[q.k]+")";}).join("  ·  ")}));
+  }
+
+}
+
+
+/* ---------- backup ---------- */
+function renderBackupStatus(){
+  var t=$("bk-status2");
+  if(!state.lastBackup){t.textContent="No backup yet.";t.className="status warn";return;}
+  var d=Math.floor((Date.now()-state.lastBackup)/864e5);
+  t.textContent="Last backup: "+(d===0?"today":d+" day"+(d===1?"":"s")+" ago")+".";
+  t.className="status "+(d<=7?"good":"warn");
+}
+function markBackup(){state.lastBackup=Date.now();save();renderBackupStatus();renderToday();}
+function notesText(){
+  var L=["Steady Coach notes, "+dkey(),"","DAILY REVIEWS"];
+  Object.keys(state.days).sort().reverse().forEach(function(k){
+    var d=state.days[k];if(!(d.good||d.slip||d.next))return;
+    L.push(niceDate(k)+" ("+(d.h||[]).filter(Boolean).length+"/7 habits)");
+    if(d.good)L.push("  Good: "+d.good);if(d.slip)L.push("  Slip: "+d.slip);if(d.next)L.push("  Next: "+d.next);
+  });
+  L.push("","MEETINGS");
+  var lab={u:"Understand first",p:"My point",r:"If decided against me",good:"Went well",slip:"Slip",thank:"Thank"};
+  state.meetings.forEach(function(m){L.push(niceDate(m.d)+", "+m.title);Object.keys(lab).forEach(function(k){if(m[k])L.push("  "+lab[k]+": "+m[k]);});});
+  L.push("","THANK-YOUS");
+  state.people.forEach(function(p){(p.log||[]).forEach(function(l){L.push(niceDate(l.d)+", "+p.name+": "+l.t);});});
+  L.push("","QUALITY RATINGS");
+  QUALS.forEach(function(q){if(state.ratings[q.k])L.push(q.n+": "+state.ratings[q.k]+"/5");});
+  return L.join("\n");
+}
+function renderAll(){renderToday();renderQuals();renderChecklist();renderMeet();renderThanks();renderWeek();loadAskSettings();renderBackupStatus();}
+function restoreText(txt){
+  var st=$("bk-status");
+  try{
+    var d=JSON.parse(txt);
+    if(!d||typeof d!=="object"||(!d.days&&!d.ratings&&!d.meetings&&!d.people&&!d.checklist))throw 0;
+    merge(d);save();renderAll();$("bk-in").value="";st.textContent="Restored.";
+  }catch(e){st.textContent="That is not a valid backup.";}
+}
+$("bk-share").addEventListener("click",async function(){
+  var json=JSON.stringify(state),name="steady-coach-backup-"+dkey()+".json";
+  try{
+    var f=new File([json],name,{type:"application/json"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Steady Coach backup"});markBackup();return;}
+    if(navigator.share){await navigator.share({title:"Steady Coach backup",text:json});markBackup();return;}
+  }catch(e){if(e&&e.name==="AbortError")return;}
+  copy(json,$("bk-share"));markBackup();
+});
+$("bk-copy").addEventListener("click",function(){copy(JSON.stringify(state),$("bk-copy"));markBackup();});
+$("bk-text").addEventListener("click",function(){copy(notesText(),$("bk-text"));});
+$("bk-restore").addEventListener("click",function(){restoreText($("bk-in").value);});
+$("bk-file").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){restoreText(String(r.result));};r.readAsText(f);});
+
+/* ---------- my checklist ---------- */
+function renderChecklist(){
+  var box=$("cl-list");box.textContent="";
+  state.checklist.forEach(function(it){
+    var row=el("div",{style:"display:flex;align-items:center;border-top:1px solid var(--line)"});
+    var b=toggleRow(it.t,it.on,function(n){it.on=n;save();});
+    b.style.flex="1";b.style.minWidth="0";b.style.borderTop="0";
+    var x=el("button",{type:"button",class:"link",text:"Remove",style:"padding:0 22px 0 8px"});
+    x.addEventListener("click",function(){
+      if(x.dataset.s!=="1"){x.dataset.s="1";x.textContent="Sure?";return;}
+      state.checklist=state.checklist.filter(function(c){return c.id!==it.id;});save();renderChecklist();
+    });
+    row.appendChild(b);row.appendChild(x);box.appendChild(row);
+  });
+}
+$("cl-add").addEventListener("click",function(){
+  var v=$("cl-in").value.trim();if(!v)return;
+  state.checklist.push({id:uid(),t:v,on:false});$("cl-in").value="";save();renderChecklist();
+});
+
+/* ---------- helpers for new sections ---------- */
+function toggleRow(text,on,cb){
+  var b=el("button",{type:"button",class:"check","aria-pressed":!!on},el("span",{class:"box",text:on?"✓":""}),el("span",{text:text}));
+  b.addEventListener("click",function(){var n=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",n);b.firstChild.textContent=n?"✓":"";cb(n);});
+  return b;
+}
+function parseKey(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function niceDate(k){return parseKey(k).toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});}
+function daysSince(k){var a=parseKey(dkey()),b=parseKey(k);return Math.round((a-b)/864e5);}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function field(label,id,val,ph,onInput){
+  var i=el("input",{type:"text",id:id,autocomplete:"off",placeholder:ph||""});i.value=val||"";
+  i.addEventListener("input",function(){onInput(i.value);});
+  return el("div",{style:"display:flex;flex-direction:column;gap:6px"},el("label",{class:"lbl","for":id,text:label}),i);
+}
+
+/* ---------- MEETINGS ---------- */
+var PREP=["I read the agenda and know my part","I checked the current wording of any instruction I may mention","My notes are on paper, not only in my head","I will breathe out slowly before I speak"];
+function renderMeet(){
+  var box=$("mt-list");box.textContent="";
+  if(!state.meetings.length){box.appendChild(el("p",{class:"note",text:"No meetings yet. Type the name of the next one above and tap Start prep."}));return;}
+  state.meetings.slice(0,15).forEach(function(m,idx){
+    var d=el("details",{class:"mt sit"});if(idx===0)d.open=true;
+    var done=m.good||m.slip||m.thank;
+    d.appendChild(el("summary",{text:m.title+"  ·  "+niceDate(m.d)+(done?"  ·  reviewed":"")}));
+    var body=el("div",{class:"body"});
+    body.appendChild(el("div",{class:"sub-title",text:"Before"}));
+    body.appendChild(field("What do I want to understand first?","mt-u-"+m.id,m.u,"",function(v){m.u=v;save();}));
+    body.appendChild(field("My one point (one sentence, said once)","mt-p-"+m.id,m.p,"",function(v){m.p=v;save();}));
+    body.appendChild(field("If the majority decides against me, I will say","mt-r-"+m.id,m.r,"",function(v){m.r=v;save();}));
+    var ch=el("div",{class:"checks"});
+    PREP.forEach(function(t,i){ch.appendChild(toggleRow(t,m.c[i],function(n){m.c[i]=n;save();}));});
+    body.appendChild(ch);
+    body.appendChild(el("div",{class:"sub-title",text:"After (within the hour)"}));
+    body.appendChild(field("What went well?","mt-g-"+m.id,m.good,"",function(v){m.good=v;save();}));
+    body.appendChild(field("One slip, and what I will do differently","mt-s-"+m.id,m.slip,"",function(v){m.slip=v;save();}));
+    body.appendChild(field("Who will I thank, and for what?","mt-t-"+m.id,m.thank,"",function(v){m.thank=v;save();}));
+    var del=el("button",{type:"button",class:"link",text:"Delete this meeting"});
+    del.addEventListener("click",function(){
+      if(del.dataset.s!=="1"){del.dataset.s="1";del.textContent="Tap again to delete";return;}
+      state.meetings=state.meetings.filter(function(x){return x.id!==m.id;});save();renderMeet();
+    });
+    body.appendChild(del);
+    d.appendChild(body);box.appendChild(d);
+  });
+}
+$("mt-new").addEventListener("click",function(){
+  var t=$("mt-title").value.trim()||"Meeting";
+  state.meetings.unshift({id:uid(),d:dkey(),title:t,u:"",p:"",r:"Understood. I am happy to support it.",c:[false,false,false,false],good:"",slip:"",thank:""});
+  $("mt-title").value="";save();renderMeet();
+});
+
+/* ---------- THANKS ---------- */
+function renderThanks(){
+  var box=$("pp-list");box.textContent="";
+  if(!state.people.length){box.appendChild(el("p",{class:"note",text:"Add the brothers you want to remember to thank."}));return;}
+  state.people.forEach(function(p){
+    var last=p.log&&p.log[0];
+    var n=last?daysSince(last.d):null;
+    var cls=n===null?"warn":n<=7?"good":n<=14?"warn":"bad";
+    var txt=n===null?"Not thanked yet":n===0?"Thanked today":"Last thanked "+n+" day"+(n===1?"":"s")+" ago";
+    var inp=el("input",{type:"text",id:"pp-f-"+p.id,placeholder:"Thank-you for what? (be specific)",autocomplete:"off"});
+    var go=el("button",{type:"button",class:"btn small",text:"Done"});
+    go.addEventListener("click",function(){
+      var v=inp.value.trim();if(!v){inp.focus();return;}
+      p.log=p.log||[];p.log.unshift({d:dkey(),t:v});if(p.log.length>20)p.log.length=20;
+      save();renderThanks();
+    });
+    var rm=el("button",{type:"button",class:"link",text:"Remove"});
+    rm.addEventListener("click",function(){
+      if(rm.dataset.s!=="1"){rm.dataset.s="1";rm.textContent="Tap again to remove";return;}
+      state.people=state.people.filter(function(x){return x.id!==p.id;});save();renderThanks();
+    });
+    box.appendChild(el("div",{class:"panel"},
+      el("div",{class:"row",style:"justify-content:space-between"},el("h3",{text:p.name}),el("span",{class:"status "+cls,text:txt})),
+      last?el("p",{class:"note",text:"Last: "+last.t}):null,
+      inp,el("div",{class:"row",style:"justify-content:space-between"},go,rm)));
+  });
+}
+$("pp-add").addEventListener("click",function(){
+  var v=$("pp-name").value.trim();if(!v)return;
+  state.people.push({id:uid(),name:v,log:[]});$("pp-name").value="";save();renderThanks();
+});
+
+/* ---------- WEEK ---------- */
+function renderWeek(){
+  var box=$("g-week");box.textContent="";
+  var counts=HABITS.map(function(){return 0;}),active=0,strong=0,slips=[],total=0;
+  for(var i=0;i<7;i++){
+    var dt=new Date();dt.setDate(dt.getDate()-i);var k=dkey(dt),d=state.days[k];
+    if(!d)continue;
+    var n=0;(d.h||[]).forEach(function(v,j){if(v){counts[j]++;n++;}});
+    total+=n;if(n>0)active++;if(n>=5)strong++;
+    if(d.slip&&d.slip.trim())slips.push({k:k,t:d.slip});
+  }
+  var meets=state.meetings.filter(function(m){return daysSince(m.d)<7;}).length;
+  var thanks=0;state.people.forEach(function(p){(p.log||[]).forEach(function(l){if(daysSince(l.d)<7)thanks++;});});
+  var top=el("div",{class:"panel"},
+    el("div",{class:"eyebrow",text:"Last 7 days"}),
+    el("div",{class:"big",text:active+" of 7 days"}),
+    el("p",{class:"note",text:"with practice logged. "+strong+" strong day"+(strong===1?"":"s")+" (5 or more checks). "+meets+" meeting"+(meets===1?"":"s")+" prepared. "+thanks+" specific thank-you"+(thanks===1?"":"s")+"."}));
+  box.appendChild(top);
+  var hp=el("div",{class:"panel"},el("h3",{text:"Your seven habits"}));
+  var weakest=0;
+  counts.forEach(function(c,j){
+    if(c<counts[weakest])weakest=j;
+    hp.appendChild(el("div",{class:"hrow",style:"flex-wrap:wrap;gap:6px 12px"},el("span",{style:"flex:1 1 100%;min-width:0",text:HABITS[j]}),
+      (function(){var b=el("div",{class:"bar"}),i=el("i");i.style.width=(c/7*100)+"%";b.appendChild(i);return b;})(),
+      el("span",{class:"n",text:c+"/7"})));
+  });
+  box.appendChild(hp);
+  var foc=el("div",{class:"focus"},el("div",{class:"eyebrow",text:"Work on this next week"}),
+    el("h2",{text:active?HABITS[weakest].replace(/^I /,"").replace(/^./,function(x){return x.toUpperCase();}):"Start with one habit each day",style:"margin:8px 0 0;font-size:1.35rem"}));
+  box.appendChild(foc);
+  var sp=el("div",{class:"panel"},el("h3",{text:"Slips you wrote this week"}));
+  if(!slips.length)sp.appendChild(el("p",{class:"note",text:"None logged. Slips are normal. Writing them down is what makes them smaller."}));
+  else{var ul=el("ul",{style:"margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"});slips.forEach(function(x){ul.appendChild(el("li",{text:niceDate(x.k)+": "+x.t}));});sp.appendChild(ul);}
+  box.appendChild(sp);
+}
+function growShow(p){
+  Array.prototype.forEach.call($("grow-seg").children,function(b){b.setAttribute("aria-pressed",b.dataset.p===p);});
+  ["week","qual","thanks","more"].forEach(function(x){$("g-"+x).hidden=x!==p;});
+}
+$("grow-seg").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;growShow(b.dataset.p);if(b.dataset.p==="week")renderWeek();});
+
+
+
+/* ---------- boot ---------- */
+(function(){var n=new Date();$("today-label").textContent=n.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});})();
+merge(lsGet());
+show("now");renderAll();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+idbGet().then(function(v){ if(v&&(v.savedAt||0)>(state.savedAt||0)){merge(v);lsSet();renderAll();} else if(!v&&state.savedAt){try{idbPut(JSON.parse(JSON.stringify(state)));}catch(e){}} });
+
+if("serviceWorker" in navigator && /^https?:/.test(location.protocol)){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
+}
+
+})();
+</script>
+</body>
+</html>
